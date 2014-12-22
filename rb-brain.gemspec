@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |gem|
   gem.name          = "rb-brain"
-  gem.version       = "0.0.1"
+  gem.version       = "0.1.0"
   gem.authors       = ["Eric Zhang"]
   gem.email         = ["i@qinix.com"]
   gem.description   = %q{rb-brain is an easy-to-use neural network written in ruby}
