@@ -1,4 +1,7 @@
 require 'brain/lookup'
+require 'json'
+require 'pry'
+require 'hashr'
 
 module Brain
   class NeuralNetwork
@@ -185,6 +188,89 @@ module Brain
       end
 
       data
+    end
+
+    def to_json
+      # make json look like:
+      # {
+      #   layers: [
+      #     { x: {},
+      #       y: {}},
+      #     {'0': {bias: -0.98771313, weights: {x: 0.8374838, y: 1.245858},
+      #      '1': {bias: 3.48192004, weights: {x: 1.7825821, y: -2.67899}}},
+      #     { f: {bias: 0.27205739, weights: {'0': 1.3161821, '1': 2.00436}}}
+      #   ]
+      # }
+      layers = []
+      (0..@output_layer).each do |layer|
+        layers[layer] = {}
+
+        if layer == 0 and @input_lookup
+          nodes = @input_lookup.keys
+        elsif layer == @output_layer and @output_lookup
+          nodes = @output_lookup.keys
+        else
+          nodes = (0...@sizes[layer]).to_a
+        end
+
+        (0...nodes.length).each do |j|
+          node = nodes[j]
+          layers[layer][node] = {}
+
+          if layer > 0
+            layers[layer][node][:bias] = @biases[layer][j]
+            layers[layer][node][:weights] = {}
+            layers[layer - 1].each do |k,v|
+              index = k
+              if layer == 1 and @input_lookup
+                index = @input_lookup[k]
+              end
+              layers[layer][node][:weights][k] = @weights[layer][j][index]
+            end
+          end
+        end
+      end
+
+      {
+        layers: layers,
+        output_lookup: !!@output_lookup,
+        input_lookup: !!@input_lookup
+      }.to_json
+    end
+
+    def from_json(json)
+      json = JSON.parse(json).deep_symbolize_keys
+      size = json[:layers].length
+
+
+      @output_layer = size - 1
+      @sizes = Array.new size
+      @weights = Array.new size
+      @biases = Array.new size
+      @outputs = Array.new size
+
+      (0..@output_layer).each do |i|
+        layer = json[:layers][i]
+        if i == 0 and (!layer[0] or json[:input_lookup])
+          @input_lookup = Lookup.lookup_from_hash layer
+        elsif i == @output_layer and (!layer[0] or json[:output_lookup])
+          @output_lookup = Lookup.lookup_from_hash layer
+        end
+
+        nodes = layer.keys
+        @sizes[i] = nodes.length
+        @weights[i] = []
+        @biases[i] = []
+        @outputs[i] = []
+
+        (0...nodes.length).each do |j|
+
+          node = nodes[j]
+          @biases[i][j] = layer[node][:bias]
+          @weights[i][j] = layer[node][:weights]
+          @weights[i][j] = @weights[i][j].values unless @weights[i][j].nil?
+        end
+      end
     end
 
   private
