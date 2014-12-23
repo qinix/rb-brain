@@ -82,6 +82,15 @@ If the network failed to train, the error will be above the error threshold. Thi
 
 If the training error is still something huge like `0.4` after 20000 iterations, it's a good sign that the network can't make sense of the data you're giving it.
 
+## JSON
+Serialize or load in the state fo a trained network with JSON:
+
+```ruby
+json = net.to_json
+
+net.from_json(json)
+```
+
 ## Options
 `NeuralNetwork` takes a hash of options:
 
@@ -100,6 +109,15 @@ hidden_layers: [3, 4]
 ```
 
 By default `brain` uses one hidden layer with size proportionate to the size of the input array.
+
+## Tests
+To run the tests, make sure you've installed the dependencies with this command:
+
+```
+bundle install
+```
+
+Then you can run all tests using `rake`
 
 # Acknowledgement
 I learned a lot from [harthur/brain](https://github.com/harthur/brain), Most of the code is rewritten from this repo. I would like to thank the author of the repo.
