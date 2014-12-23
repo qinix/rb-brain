@@ -25,7 +25,7 @@ Require it in your code:
 
     require 'brain'
 
-Or, in Rails you can add it to your Gemfile:
+Or, you can add it to your Gemfile:
 
     gem 'rb-brain', :require => 'brain'
 
@@ -54,8 +54,8 @@ output = net.run({x: 1,y: 0})  # {result: 0.948}
 ```ruby
 net.train(data,
   error_thresh: 0.005,  # error threshold to reach
-  iterations: 20000,   # maximum training iterations
-  log: true,           # print progress periodically
+  iterations: 20000,    # maximum training iterations
+  log: true,            # print progress periodically
   log_period: 10,       # number of iterations between logging
   learning_rate: 0.3    # learning rate
 )
@@ -97,7 +97,7 @@ net.from_json(json)
 ```ruby
 net = Brain::NeuralNetwork.new(
   hidden_layers: [4],
-  learning_rate: 0.6 # global learning rate, useful when training using streams
+  learning_rate: 0.6 # global learning rate
 )
 ```
 
